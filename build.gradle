@@ -1,6 +1,7 @@
 // https://docs.gradle.org/current/userguide/tutorial_java_projects.html
 
 apply plugin: 'java'
+apply plugin: 'maven'
 
 repositories {
     mavenCentral()
@@ -12,11 +13,21 @@ dependencies {
 
 }
 
+group = 'com.k-int'
 sourceCompatibility = 1.7
 version = '1.0'
 jar {
     manifest {
         attributes 'Implementation-Title': 'Gradle Quickstart',
                    'Implementation-Version': version
+    }
+}
+
+// See https://docs.gradle.org/current/userguide/maven_plugin.html#uploading_to_maven_repositories
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: "file://~/.m2/repository/")
+        }
     }
 }

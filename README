@@ -1,0 +1,3 @@
+To build and install jar in the local maven repo
+
+gradle install
