@@ -99,8 +99,8 @@ public class OIDRegConfigurator
                if ( codec_name != null )
                {
                  Class codec_class = Class.forName(codec_name);
-                 Method get_codec_method = codec_class.getMethod("getCodec",null);
-                 the_codec = get_codec_method.invoke(null,null);
+                 Method get_codec_method = codec_class.getMethod("getCodec");
+                 the_codec = get_codec_method.invoke(null);
                }
              }
              catch ( java.lang.ClassNotFoundException cnfe )
