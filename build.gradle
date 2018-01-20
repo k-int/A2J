@@ -1,0 +1,22 @@
+// https://docs.gradle.org/current/userguide/tutorial_java_projects.html
+
+apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'log4j', name: 'log4j', version: '1.2.5'
+    compile group: 'commons-logging', name: 'commons-logging', version: '1.2'
+
+}
+
+sourceCompatibility = 1.7
+version = '1.0'
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'Gradle Quickstart',
+                   'Implementation-Version': version
+    }
+}
