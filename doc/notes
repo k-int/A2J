@@ -1,0 +1,30 @@
+General Notes $Id: notes,v 1.1.1.1 2003/07/17 17:21:01 ianibbo Exp $
+
+Building applications using the generated code
+----------------------------------------------
+
+I think the eaisest thing to do is to look at the Z3950 client application that is
+a part of the java toolkit (download from jzkit.sourceforge.net). Specifically,
+look at com.k_int.z3950.client.ZClient and com.k_int.z3950.util.ZEndpoint.
+
+Current notes on compiler performance / state
+---------------------------------------------
+
+Z3950
+-----
+Compiler seems to compile everything OK and protocol stack works ok in test system.
+Currently, most interop testing done with server at bagel.indexdata.dk port 210, database GILS.
+
+ISO10161
+--------
+The compiler now processes the ASN, but I have not yet tried to build an
+application. Really need to check that the module level explicit tagging directive
+is properly observed. Will build a test system at some point.
+
+LDAP
+----
+Compiler needs work on some of the nested types, won't compile at the moment, give me a shout if
+you need this to work, it's only going to take me a short while to fix.
+
+Ian.
+ibbo@k-int.com

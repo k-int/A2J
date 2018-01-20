@@ -1,0 +1,4 @@
+TO build from ASN definition :
+
+jjt AsnParser.jjt
+javacc AsnParser.jj

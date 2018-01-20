@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+
+<!-- $Id: build.xml,v 1.1.1.1 2003/07/17 17:21:01 ianibbo Exp $ -->
+
+<project name="a2j" default="all" basedir=".">
+
+   <target name="init">
+	<property name="Name" value="main"/>
+	<property name="name" value="main"/>
+	<property name="dirs.base" value="${basedir}"/>
+	<property name="classdir" value="${dirs.base}/classes"/>
+	<property name="src" value="${dirs.base}/src"/>
+	<property name="dist" value="${dirs.base}/dist"/>
+	<property name="lib" value="${dirs.base}/lib"/>
+   </target>
+
+
+   <target name="all" depends="init,prepare,dist">
+   </target>
+
+   <target name="prepare">
+     <tstamp/>
+     <mkdir dir="${classdir}" />
+     <mkdir dir="${lib}" />
+     <mkdir dir="${dist}" />
+   </target>
+
+   <target name="dist" depends="compile">
+     <copy file="./oidreg.default" todir="${classdir}" /> 
+
+     <jar jarfile="${dist}/a2j.jar" basedir="${classdir}" manifest="./etc/a2j-manifest" />
+
+     <jar jarfile="${dist}/a2jruntime.jar" 
+	     basedir="${classdir}" 
+	     manifest="./etc/a2j-runtime-manifest"
+	     includes="oidreg.default,com/k_int/codec/runtime/**,com/k_int/codec/util/**, com/k_int/gen/AsnUseful/**, com/k_int/util/**" />
+   </target>
+
+   <target name="compile">
+     <javac srcdir="${src}"
+               debug="${build.debug}"
+               deprecation="${build.deprecation}"
+               destdir="${classdir}"
+               includes="com/k_int/**/*.java">
+      <classpath>
+         <pathelement path="${classpath}"/>
+         <fileset dir="${lib}">
+           <include name="**/*.jar"/>
+         </fileset>
+         <pathelement path="${classdir}"/>
+       </classpath>
+     </javac>
+   </target>
+
+</project>
+

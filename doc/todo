@@ -1,0 +1,10 @@
+a2j informal todo list $Id: todo,v 1.1.1.1 2003/07/17 17:21:01 ianibbo Exp $
+
+
+
+Add call & code to read enumeration options in CodecBuilderInfo / EnumTypeInfo
+
+Add Enum base codec (replace simple Integer)
+
+Not processing FROM directive at end of iso10161 spec, limiting characters, unsure
+about validity of """ as a construct.

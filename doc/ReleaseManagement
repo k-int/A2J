@@ -1,0 +1,11 @@
+$Id: ReleaseManagement,v 1.1.1.1 2003/07/17 17:21:01 ianibbo Exp $
+
+Release management for ki-a2j
+
+A2J Releases should be controlled my maven now, although you may continue to use simple
+ant build files for day-to-day development.
+
+When the time comes to make a release use
+
+maven<cr> to make the build
+maven jar:deploy<cr> to upload the jar file to the maven repository

@@ -1,0 +1,7 @@
+echo
+echo Creating encoders and type classes..........
+echo 
+rm -f [A-Z]*/*.java
+export CLASSPATH=$CLASSPATH:~/a2j/lib/a2j.jar
+> zout
+java -DCodecBasePackage="com.k_int.gen" com.k_int.codec.comp.runParser ./z3950v3.asn 2>> zout

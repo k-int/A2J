@@ -1,0 +1,11 @@
+echo
+echo Creating encoders and type classes..........
+echo 
+rm -f */*.java
+export CLASSPATH=$CLASSPATH:../../../../lib/a2j.jar
+> zout
+java -DCodecBasePackage="com.example.gen" com.k_int.codec.comp.runParser ./useful.asn1 2> zout
+java -DCodecBasePackage="com.example.gen" com.k_int.codec.comp.runParser ./useful.asn1 ./z3950v3.asn 2>> zout
+# Does not work yet
+# java -DCodecBasePackage="com.example.gen" com.k_int.codec.comp.runParser ./useful.asn1 ./LDAPv2.asn 2>> zout
+java -DCodecBasePackage="com.example.gen" com.k_int.codec.comp.runParser ./useful.asn1 ./isoill_9702.asn1 2>> zout

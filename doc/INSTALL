@@ -1,0 +1,19 @@
+$Id: INSTALL,v 1.1.1.1 2003/07/17 17:21:01 ianibbo Exp $
+
+a2j INSTALL file, last updated by Ian on Fri Jan  5 12:37:20 GMT 2001
+
+The a2j distribution contains 2 jar files, a2j.jar which contains the
+full distribution including the ASN to Java compiler, and a2jruntime.jar
+which containst just the classes needed to make the generated codec 
+classes work. The runtime is considerably smaller than the full distribution
+so you are advised to distribute only that file with any applet that might
+use generated codecs.
+
+To use the runtime, simply add the a2jruntime.jar file to your classpath.
+
+To use the complier, make sure a2j.jar is in your classpath and invoke the
+compiler as described in the README.
+
+Cheers,
+Ian.
+

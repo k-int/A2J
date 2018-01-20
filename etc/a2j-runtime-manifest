@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Created-By: Ian Ibbotson (ian.ibbotson@k-int.com)
+
+Name: com/k_int/codec/runtime
+Specification-Title: "ASN Runtime Classes" 
+Specification-Version: "1.1.1"
+Specification-Vendor: "Knowledge Integration Ltd".
+Implementation-Title: "com.k_int.codec.runtime" 
+Implementation-Version: "1.1.1"
+Implementation-Vendor: "Knowledge Integration Ltd"
