@@ -179,7 +179,7 @@ public class SequenceTypeInfo extends TypeInfo
              constructor_sig_stream.write(ti.getInternalType()+" "+t.getMemberName());
 
              constructor_body_stream.write("\n        this."+t.getMemberName()+"="+t.getMemberName()+";");
-             to_string_stream.write("\n        sw.write(\""+t.getMemberName()+"=\""+t.getMemberName()+");");
+             to_string_stream.write("\n        sw.write(\""+t.getMemberName()+"=\"+"+t.getMemberName()+");");
            }
            else
            {
