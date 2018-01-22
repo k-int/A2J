@@ -54,6 +54,8 @@ public class ModuleInfo
       module_package_name = s+"."+module_reference.replace('-','_');
 
     module_package_dir = module_reference.replace('-','_');
+
+    System.out.println("ModuleInfo::ModuleInfo("+module_reference+") "+module_package_name+" "+module_package_dir);
   }
 
   public void registerType(String type_reference, TypeInfo ti)

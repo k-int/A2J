@@ -13,7 +13,7 @@ dependencies {
 
 }
 
-group = 'com.k-int'
+group = 'com.k_int'
 sourceCompatibility = 1.7
 version = '1.0'
 jar {
