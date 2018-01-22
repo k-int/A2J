@@ -12,6 +12,7 @@ import com.k_int.gen.AsnUseful.*;
 
 import java.math.BigInteger;
 
+import com.k_int.codec.runtime.*;
 
 public class ProtocolEndpoint<RootCodecClass, RootTypeClass>  extends Thread {
 
