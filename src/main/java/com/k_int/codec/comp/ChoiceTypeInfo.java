@@ -143,7 +143,7 @@ public class ChoiceTypeInfo extends TypeInfo
 
         type_writer.write("public class "+this.type_class_name+" extends ChoiceType implements Serializable \n{\n");
 
-        type_writer.write("  private transient static LoggingContext log = LogFactory.getLog("+this.type_class_name+".class);\n");
+        type_writer.write("  private transient static Log log = LogFactory.getLog("+this.type_class_name+".class);\n");
 
         // declarations_stream.write("  public Object o = null;\n");
         // declarations_stream.write("  public int which = -1;\n");
