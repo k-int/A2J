@@ -16,7 +16,7 @@ import com.k_int.codec.runtime.*;
 
 public class ProtocolEndpoint<RootCodecClass, RootTypeClass>  extends Thread {
 
-  private RootCodecClass codec = RootCodecClass.getCodec();
+  private RootCodecClass codec = null;
   private OIDRegister reg = OIDRegister.getRegister();
   private Socket protocol_association = null;
   private InputStream incoming_data = null;
@@ -33,9 +33,14 @@ public class ProtocolEndpoint<RootCodecClass, RootTypeClass>  extends Thread {
   private static final int ASSOC_STATUS_PERM_FAILURE=3;
 
 
-  public ProtocolEndpoint(String target_hostname, int target_port) {
+  public ProtocolEndpoint(RootCodecClass codec, String target_hostname, int target_port) {
+    this.codec = codec;
     this.target_hostname=target_hostname;
     this.target_port=target_port;
+  }
+
+  public ProtocolEndpoint(RootCodecClass codec) {
+    this.codec = codec;
   }
 
   public void connect() throws java.net.ConnectException, java.io.IOException {
