@@ -15,7 +15,7 @@ class ProtocolEndpointTest extends Specification {
       // ProtocolEndpoint<Integer_codec, BigInteger> intProtocolEndpoint = new ProtocolEndpoint<Integer_codec, BigInteger>(Integer_codec.getCodec(), 'localhost',8999);
       // ProtocolServer<Integer_codec, BigInteger> protocol_server = new ProtocolServer<Integer_codec, BigInteger>(Integer_codec.getCodec(), 8999);
       System.out.println("Create New protocol server");
-      ProtocolServer ps = new ProtocolServer('localhost',8999);
+      ProtocolServer ps = new ProtocolServer<Integer_codec, BigInteger>('localhost',8999,Integer_codec.getCodec());
       System.out.println("Start New protocol server");
       ps.start();
       System.out.println("Wait for setup");

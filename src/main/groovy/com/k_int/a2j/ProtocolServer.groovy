@@ -11,14 +11,21 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.*;
 
-public class ProtocolServer {
+public class ProtocolServer<RootCodecClass, RootTypeClass> {
 
   private Selector selector;
-  private Map<SocketChannel,List> dataMapper;
+  private Map<SocketChannel,ProtocolEndpoint<RootCodecClass, RootTypeClass>> dataMapper;
   private InetSocketAddress listenAddress;
   private int server_status = 0; // 0=Idle, 1=Started, 2=Stop Requested, 3=Stopped
   private Runnable server = null;
-    
+  private RootCodecClass root_codec;
+
+  public ProtocolServer(String address, int port, RootCodecClass root_codec) throws IOException {
+    listenAddress = new InetSocketAddress(address, port);
+    dataMapper = new HashMap<SocketChannel,ProtocolEndpoint<RootCodecClass, RootTypeClass>>();
+    root_codec = root_codec;
+  }
+
   public void start() throws Exception {
 
     System.out.println("ProtocolServer::start");
@@ -63,11 +70,6 @@ public class ProtocolServer {
         }
       }
     }
-  }
-
-  public ProtocolServer(String address, int port) throws IOException {
-    listenAddress = new InetSocketAddress(address, port);
-    dataMapper = new HashMap<SocketChannel,List>();
   }
 
   // create server channel  
@@ -128,7 +130,8 @@ public class ProtocolServer {
     System.out.println("Connected to: " + remoteAddr);
 
     // register channel with selector for further IO
-    dataMapper.put(channel, new ArrayList());
+    ProtocolEndpoint<RootCodecClass, RootTypeClass> pe = new ProtocolEndpoint<RootCodecClass, RootTypeClass>(root_codec)
+    dataMapper.put(channel, pe);
     channel.register(this.selector, SelectionKey.OP_READ);
   }
     
