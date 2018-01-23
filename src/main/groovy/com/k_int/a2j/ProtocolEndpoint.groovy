@@ -177,6 +177,9 @@ public class ProtocolEndpoint<RootCodecClass, RootTypeClass>  extends Thread {
   }
 
 
+  public void incomingData(byte[] data) {
+    println("incoming data..."+data.length);
+  }
   
 }
 

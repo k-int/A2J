@@ -154,7 +154,9 @@ public class ProtocolServer<RootCodecClass, RootTypeClass> {
 
     byte[] data = new byte[numRead];
     System.arraycopy(buffer.array(), 0, data, 0, numRead);
-    System.out.println("Got: " + new String(data));
+    // System.out.println("Got: " + new String(data));
+    ProtocolEndpoint pe = this.dataMapper.get(channel);
+    pe.incomingData(data);
   }
 }
 
