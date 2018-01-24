@@ -32,6 +32,8 @@ public class ProtocolEndpoint<RootCodecClass, RootTypeClass>  extends Thread {
   private static final int ASSOC_STATUS_CONNECTED=2;
   private static final int ASSOC_STATUS_PERM_FAILURE=3;
 
+  private BERInputStream bds = null;
+
 
   public ProtocolEndpoint(RootCodecClass codec, String target_hostname, int target_port) {
     this.codec = codec;
@@ -39,8 +41,12 @@ public class ProtocolEndpoint<RootCodecClass, RootTypeClass>  extends Thread {
     this.target_port=target_port;
   }
 
-  public ProtocolEndpoint(RootCodecClass codec) {
+  public ProtocolEndpoint(RootCodecClass codec, Socket s) {
     this.codec = codec;
+    protocol_association = s;
+    outgoing_data = protocol_association.getOutputStream();
+    incoming_data = protocol_association.getInputStream();
+    bds = new BERInputStream(incoming_data, charset_encoding,DEFAULT_BUFF_SIZE);
   }
 
   public void connect() throws java.net.ConnectException, java.io.IOException {
@@ -51,8 +57,9 @@ public class ProtocolEndpoint<RootCodecClass, RootTypeClass>  extends Thread {
       int timeout = 20000;
       String timeout_prop = props.getProperty("ConnectTimeout");
       protocol_association = new Socket(target_hostname, target_port);
-      outgoing_data = z_assoc.getOutputStream();
-      incoming_data = z_assoc.getInputStream();
+      outgoing_data = protocol_association.getOutputStream();
+      incoming_data = protocol_association.getInputStream();
+      bds = new BERInputStream(incoming_data, charset_encoding,DEFAULT_BUFF_SIZE);
     }
     else {
       throw new java.net.ConnectException("No ServiceHost and/or ServicePort");
@@ -177,8 +184,12 @@ public class ProtocolEndpoint<RootCodecClass, RootTypeClass>  extends Thread {
   }
 
 
-  public void incomingData(byte[] data) {
+  public synchronized void incomingData(byte[] data) {
     println("incoming data..."+data.length);
+    // Append data to BAIS
+
+    // If BAIS contains complete APDU process
+
   }
   
 }

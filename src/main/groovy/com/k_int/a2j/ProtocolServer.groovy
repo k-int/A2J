@@ -130,33 +130,17 @@ public class ProtocolServer<RootCodecClass, RootTypeClass> {
     System.out.println("Connected to: " + remoteAddr);
 
     // register channel with selector for further IO
-    ProtocolEndpoint<RootCodecClass, RootTypeClass> pe = new ProtocolEndpoint<RootCodecClass, RootTypeClass>(root_codec)
-    dataMapper.put(channel, pe);
+    AsyncProtocolEndpoint<RootCodecClass, RootTypeClass> pe = new AsyncProtocolEndpoint<RootCodecClass, RootTypeClass>(root_codec, channel);
+    dataMapper.put(channel, ape);
     channel.register(this.selector, SelectionKey.OP_READ);
   }
     
   //read from the socket channel
   private void read(SelectionKey key) throws IOException {
-    SocketChannel channel = (SocketChannel) key.channel();
-    ByteBuffer buffer = ByteBuffer.allocate(1024);
-    int numRead = -1;
-    numRead = channel.read(buffer);
-
-    if (numRead == -1) {
-      this.dataMapper.remove(channel);
-      Socket socket = channel.socket();
-      SocketAddress remoteAddr = socket.getRemoteSocketAddress();
-      System.out.println("Connection closed by client: " + remoteAddr);
-      channel.close();
+    AsyncProtocolEndpoint pe = this.dataMapper.get(channel);
+    if ( pe.notifyIncomingData() == -1 ) {
       key.cancel();
-      return;
     }
-
-    byte[] data = new byte[numRead];
-    System.arraycopy(buffer.array(), 0, data, 0, numRead);
-    // System.out.println("Got: " + new String(data));
-    ProtocolEndpoint pe = this.dataMapper.get(channel);
-    pe.incomingData(data);
   }
 }
 

@@ -708,24 +708,21 @@ public class BERInputStream implements SerializationManager
                    ", constructed="+csi.is_constructed+
                    ", indefinite length encoding ="+csi.is_indefinite_length);
 
-      if ( csi.content_length > 0 )
-      {
+      if ( csi.content_length > 0 ) {
         // debug("MoreData comparing "+csi.bytes_processed+" < "+ csi.content_length+"\n");
         if ( csi.bytes_processed < csi.content_length )
           return true;
         else
           return false;
       }
-      else if ( csi.is_indefinite_length )
-      {
+      else if ( csi.is_indefinite_length ) {
         // Indefinite length encodings are terminated by 00
         // debug("MoreData... Indefinite length encoding, so check for terminating octets\n");
         in.mark(5);
         int i1 = in.read();
         int i2 = in.read();
         in.reset();
-        if ( ( i1 == 0 ) && ( i2 == 0 ) )
-        {
+        if ( ( i1 == 0 ) && ( i2 == 0 ) ) {
           // debug("MoreData... false ( Next octets are 00 )\n");
           // csi.bytes_processed += 2;
           return false;
