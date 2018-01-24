@@ -7,6 +7,9 @@ import com.k_int.codec.runtime.Integer_codec
 import java.math.BigInteger
 import com.k_int.a2j.ProtocolServer;
 
+/**
+ * Test the traditional socket based client and server endpoints.
+ */
 class ProtocolEndpointTest extends Specification {
 
   @Unroll
