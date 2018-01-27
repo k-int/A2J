@@ -21,11 +21,9 @@ class ProtocolEndpointTest extends Specification {
   @Unroll
   def testBasicIntProtocol() {
     when:
-      // ProtocolEndpoint<Integer_codec, BigInteger> intProtocolEndpoint = new ProtocolEndpoint<Integer_codec, BigInteger>(Integer_codec.getCodec(), 'localhost',8999);
-      // ProtocolServer<Integer_codec, BigInteger> protocol_server = new ProtocolServer<Integer_codec, BigInteger>(Integer_codec.getCodec(), 8999);
       logger.debug("Create New protocol server");
-      
-      ProtocolServer ps = new ProtocolServer<Integer_codec, BigInteger>(8999,Integer_codec.getCodec());
+
+      ProtocolServer ps = new ProtocolServer<Integer_codec, BigInteger>(8999, Integer_codec.getCodec());
 
       logger.debug("Start New protocol server");
       ps.start();

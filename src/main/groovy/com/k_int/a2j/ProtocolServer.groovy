@@ -93,6 +93,7 @@ public class ProtocolServer<RootCodecClass, RootTypeClass> {
 
         logger.debug("Create new protocol association for new socket connection");
         ProtocolAssociation pa = new ProtocolAssociation<RootCodecClass,RootTypeClass>(socket,root_codec,'ServerAssociation')
+
         logger.debug("Starting protocol association (server) and returning to accept loop");
         pa.start()
       }
