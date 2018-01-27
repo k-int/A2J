@@ -41,6 +41,12 @@ class ProtocolEndpointTest extends Specification {
       logger.debug("Stop server");
       java.net.Socket client_socket = new java.net.Socket(java.net.InetAddress.getByName('localhost'),8999);
       ProtocolAssociation client = new ProtocolAssociation<Integer_codec, BigInteger>(client_socket,Integer_codec.getCodec());
+
+      // Start client thread
+      client.start()
+
+      client.send(new BigInteger(1002));
+
       ps.stop(true);
 
     expect:

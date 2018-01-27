@@ -12,6 +12,9 @@ import java.nio.channels.SocketChannel;
 import java.util.*;
 import com.k_int.codec.runtime.BERInputStream
 import com.k_int.codec.runtime.BEROutputStream
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public class ProtocolAssociation<RootCodecClass, RootTypeClass> extends Thread {
 
@@ -22,9 +25,20 @@ public class ProtocolAssociation<RootCodecClass, RootTypeClass> extends Thread {
   private InputStream incoming_data = null;
   private OutputStream outgoing_data = null;
 
+  /** The default buffer size for BER send and recieve streams */
+  private static final int DEFAULT_BUFF_SIZE = 32768;
+
+  public static final String US_ASCII_ENCODING = "US-ASCII";
+  public static final String UTF_8_ENCODING = "UTF-8";
+  public static final String UTF_16_ENCODING = "UTF-16";
+  private String charset_encoding = US_ASCII_ENCODING;
+
+  final static Logger logger = LoggerFactory.getLogger(ProtocolAssociation.class);
+
+
   
   public ProtocolAssociation(Socket socket, RootCodecClass root_codec) throws IOException {
-    root_codec = root_codec;
+    this.root_codec = root_codec;
     this.socket = socket;
     try {
       incoming_data = socket.getInputStream();
@@ -41,9 +55,9 @@ public class ProtocolAssociation<RootCodecClass, RootTypeClass> extends Thread {
     while(server_status==1) {
       BERInputStream bds = new BERInputStream(incoming_data,charset_encoding);
       try {
-        // PDU_type pdu = null;
-        // pdu = (PDU_type)codec.serialize(bds, pdu, false, "PDU");
-        // notifyAPDUEvent(pdu);
+        RootTypeClass apdu = null;
+        apdu = (RootTypeClass)root_codec.serialize(bds, apdu, false, "PDU");
+        receive(apdu);
       }
       catch ( java.io.InterruptedIOException iioe ) {
         cat.error("Processing java.io.InterruptedIOException, shut down association",iioe);
@@ -76,5 +90,18 @@ public class ProtocolAssociation<RootCodecClass, RootTypeClass> extends Thread {
     }
   }
 
+  public void send(RootTypeClass apdu) {
+    logger.debug("send");
+    BEROutputStream encoder = new BEROutputStream(DEFAULT_BUFF_SIZE,charset_encoding);
+    root_codec.serialize(encoder, apdu, false, "PDU");
+    encoder.flush();
+    encoder.writeTo(outgoing_data);
+    outgoing_data.flush();
+    logger.debug("Sending APDU complete");
+  }
+
+  public receive(RootTypeClass apdu) {
+    logger.debug("incoming APDU");
+  }
 }
 
