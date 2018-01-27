@@ -39,7 +39,7 @@ public class ProtocolAssociation<RootCodecClass, RootTypeClass> extends Thread {
   
   public ProtocolAssociation(Socket socket, 
                              RootCodecClass root_codec,
-                             assoc_name) throws IOException {
+                             String assoc_name) throws IOException {
     this.root_codec = root_codec;
     this.socket = socket;
     this.assoc_name=assoc_name;

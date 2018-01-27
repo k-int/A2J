@@ -27,7 +27,8 @@ public class ProtocolServer<RootCodecClass, RootTypeClass> {
   final static Logger logger = LoggerFactory.getLogger(ProtocolServer.class);
 
 
-  public ProtocolServer(int port, RootCodecClass root_codec) throws IOException {
+  public ProtocolServer(int port, 
+                        RootCodecClass root_codec) throws IOException {
     this.root_codec = root_codec;
     this.server_port = port;
   }
