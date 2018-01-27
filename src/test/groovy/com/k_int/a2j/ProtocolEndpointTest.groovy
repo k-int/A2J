@@ -31,22 +31,27 @@ class ProtocolEndpointTest extends Specification {
       ps.start();
 
       logger.debug("Wait for setup");
-      synchronized(this) {
-        Thread.sleep(2000);
-      }
+      synchronized(this) { Thread.sleep(2000); }
 
       logger.debug("ok - carry on");
 
     then:
-      logger.debug("Stop server");
+      logger.debug("Create client");
       java.net.Socket client_socket = new java.net.Socket(java.net.InetAddress.getByName('localhost'),8999);
-      ProtocolAssociation client = new ProtocolAssociation<Integer_codec, BigInteger>(client_socket,Integer_codec.getCodec());
+      ProtocolAssociation client = new ProtocolAssociation<Integer_codec, BigInteger>(client_socket,Integer_codec.getCodec(),'ClientAssociation');
 
       // Start client thread
       client.start()
 
+      logger.debug("Send int value 1002");
       client.send(new BigInteger(1002));
 
+      logger.debug("Close client");
+      client.close();
+
+      synchronized(this) { Thread.sleep(2000); }
+
+      logger.debug("Shutdown protocol server");
       ps.stop(true);
 
     expect:

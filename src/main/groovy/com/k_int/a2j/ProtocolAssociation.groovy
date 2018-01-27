@@ -35,32 +35,41 @@ public class ProtocolAssociation<RootCodecClass, RootTypeClass> extends Thread {
 
   final static Logger logger = LoggerFactory.getLogger(ProtocolAssociation.class);
 
-
+  String assoc_name = "ProtocolAssociation";
   
-  public ProtocolAssociation(Socket socket, RootCodecClass root_codec) throws IOException {
+  public ProtocolAssociation(Socket socket, 
+                             RootCodecClass root_codec,
+                             assoc_name) throws IOException {
     this.root_codec = root_codec;
     this.socket = socket;
+    this.assoc_name=assoc_name;
+
     try {
       incoming_data = socket.getInputStream();
       outgoing_data = socket.getOutputStream();
     }
     catch( java.io.IOException e ) {
-      cat.error("Error constructing TargetEndpoint",e);
+      logger.error("Error constructing TargetEndpoint",e);
     }
 
   }
 
   public void run() {
+    logger.debug("ProtocolAssociation::run (${assoc_name})");
+
+    server_status=1;
+    BERInputStream bds = new BERInputStream(incoming_data,charset_encoding);
+
 
     while(server_status==1) {
-      BERInputStream bds = new BERInputStream(incoming_data,charset_encoding);
       try {
         RootTypeClass apdu = null;
+        logger.debug("Reading next APDU (${assoc_name})");
         apdu = (RootTypeClass)root_codec.serialize(bds, apdu, false, "PDU");
         receive(apdu);
       }
       catch ( java.io.InterruptedIOException iioe ) {
-        cat.error("Processing java.io.InterruptedIOException, shut down association",iioe);
+        logger.error("Processing java.io.InterruptedIOException, shut down association",iioe);
         running = false;
         try {
           //sendClose(0, "Session Timeout");
@@ -74,20 +83,22 @@ public class ProtocolAssociation<RootCodecClass, RootTypeClass> extends Thread {
       catch ( java.io.IOException ioe ) {
         // Client snapped connection somehow...
         if(ioe.getMessage().equals("Connection Closed")) {
-          cat.debug("Connection Closed");
+          logger.debug("Connection Closed");
         }
         else {
-          cat.error("Processing java.io.IOException, shut down association", ioe);
+          logger.error("Processing java.io.IOException, shut down association", ioe);
         }
         running = false;
-        notifyClose();
+        // notifyClose();
       }
       catch ( Exception e ) {
-        cat.error("Processing exception : ",e);
+        logger.error("Processing exception : ",e);
         e.printStackTrace();
         running=false;
       }
     }
+    logger.debug("ProtocolAssociation exiting run loop (${assoc_name})");
+    server_status = 3;
   }
 
   public void send(RootTypeClass apdu) {
@@ -100,8 +111,14 @@ public class ProtocolAssociation<RootCodecClass, RootTypeClass> extends Thread {
     logger.debug("Sending APDU complete");
   }
 
+  public void close() {
+    logger.debug("Close");
+    server_status=2;
+    socket.close()
+  }
+
   public receive(RootTypeClass apdu) {
-    logger.debug("incoming APDU");
+    logger.debug("incoming APDU ${apdu}");
   }
 }
 

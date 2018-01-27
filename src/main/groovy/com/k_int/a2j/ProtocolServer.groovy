@@ -28,7 +28,7 @@ public class ProtocolServer<RootCodecClass, RootTypeClass> {
 
 
   public ProtocolServer(int port, RootCodecClass root_codec) throws IOException {
-    root_codec = root_codec;
+    this.root_codec = root_codec;
     this.server_port = port;
   }
 
@@ -91,7 +91,7 @@ public class ProtocolServer<RootCodecClass, RootTypeClass> {
           socket.setSoTimeout(socket_timeout);
 
         logger.debug("Create new protocol association for new socket connection");
-        ProtocolAssociation pa = new ProtocolAssociation<RootCodecClass,RootTypeClass>(socket,root_codec)
+        ProtocolAssociation pa = new ProtocolAssociation<RootCodecClass,RootTypeClass>(socket,root_codec,'ServerAssociation')
         logger.debug("Starting protocol association (server) and returning to accept loop");
         pa.start()
       }
