@@ -68,17 +68,16 @@ public class ProtocolAssociation<RootCodecClass, RootTypeClass> extends Thread {
         apdu = (RootTypeClass)root_codec.serialize(bds, apdu, false, "PDU");
         receive(apdu);
       }
+      catch ( java.net.SocketException se ) {
+        if ( se.message.equals('Socket closed') ) {
+        }
+        else {
+        }
+        server_status = 2;
+      }
       catch ( java.io.InterruptedIOException iioe ) {
         logger.error("Processing java.io.InterruptedIOException, shut down association",iioe);
-        running = false;
-        try {
-          //sendClose(0, "Session Timeout");
-        }
-        catch ( java.io.IOException ioe ) {
-          // Don't worry, the peer might just have got the close PDU and shut things down ahead of us...
-        }
-        // notifyClose();
-        // No need to close socket, but we should notify all listeners...
+        server_status = 2;
       }
       catch ( java.io.IOException ioe ) {
         // Client snapped connection somehow...
@@ -88,13 +87,13 @@ public class ProtocolAssociation<RootCodecClass, RootTypeClass> extends Thread {
         else {
           logger.error("Processing java.io.IOException, shut down association", ioe);
         }
-        running = false;
+        server_status = 2;
         // notifyClose();
       }
       catch ( Exception e ) {
         logger.error("Processing exception : ",e);
         e.printStackTrace();
-        running=false;
+        server_status = 2;
       }
     }
     logger.debug("ProtocolAssociation exiting run loop (${assoc_name})");
