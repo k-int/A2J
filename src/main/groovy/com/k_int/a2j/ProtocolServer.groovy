@@ -11,6 +11,10 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
 public class ProtocolServer<RootCodecClass, RootTypeClass> {
 
   private int socket_timeout = 300000;  // 300 second default timeout
@@ -18,6 +22,10 @@ public class ProtocolServer<RootCodecClass, RootTypeClass> {
   private int server_port = 0;
   private Runnable server = null;
   private RootCodecClass root_codec;
+  private ServerSocket server_socket = null;
+
+  final static Logger logger = LoggerFactory.getLogger(ProtocolServer.class);
+
 
   public ProtocolServer(int port, RootCodecClass root_codec) throws IOException {
     root_codec = root_codec;
@@ -26,16 +34,16 @@ public class ProtocolServer<RootCodecClass, RootTypeClass> {
 
   public void start() throws Exception {
 
-    System.out.println("ProtocolServer::start");
+    logger.debug("ProtocolServer::start");
 
     server = new Runnable() {
       @Override
       public void run() {
         try {
           server_status = 1;
-          System.out.println("About to call startServer");
+          logger.debug("About to call startServer");
           startServer();
-          System.out.println("startServer done");
+          logger.debug("startServer done");
         } catch (IOException e) {
           e.printStackTrace();
         }
@@ -44,28 +52,27 @@ public class ProtocolServer<RootCodecClass, RootTypeClass> {
 
     new Thread(server).start()
 
-    System.out.println("ProtocolServer::start returning");
+    logger.debug("ProtocolServer::start returning");
   }
 
   public void stop(boolean wait_for_finish) {
 
-    System.out.println("stop requested, currently "+server_status);
+    logger.debug("stop requested, currently "+server_status);
 
     if ( server_status == 1 ) {
       server_status=2;
 
-      if ( this.selector ) {
-        System.out.println("wake up selector");
-        this.selector.wakeup();
-      }
+      if ( server_socket)
+        server_socket.close();
 
       if ( wait_for_finish ) {
-        System.out.println("Wait for server status 3, currently "+server_status);
         while(server_status!=3) {
+          logger.debug('Wait for server status 3, currently '+server_status);
           synchronized(this) {
             this.wait();
           }
         }
+        logger.debug('Server reached status 3 - Socket accept thread terminating');
       }
     }
   }
@@ -75,7 +82,7 @@ public class ProtocolServer<RootCodecClass, RootTypeClass> {
     server_socket = new ServerSocket(server_port);
     try {
       while ( server_status==1 ) {
-        cat.debug("Waiting for connection");
+        logger.debug("Waiting for connection");
         Socket socket = (Socket)server_socket.accept();
 
         if ( socket_timeout > 0 )
@@ -83,14 +90,23 @@ public class ProtocolServer<RootCodecClass, RootTypeClass> {
 
         ProtocolAssociation pa = new ProtocolAssociation<RootCodecClass,RootTypeClass>(socket,root_codec)
       }
-
-      server_socket.close();
     }
-    catch (java.io.IOException e)
-    {
+    catch ( java.net.SocketException se) {
+      if ( se.message?.equals('Socket closed') ) {
+        logger.debug('Server socket closed, shutown');
+      }
+      else {
+        logger.info("Socket exception",se);
+      }
+    }
+    catch (java.io.IOException e) {
       e.printStackTrace();
     }
 
+    server_status = 3;
+    synchronized(this) {
+      this.notifyAll();
+    }
   }
 
 }
