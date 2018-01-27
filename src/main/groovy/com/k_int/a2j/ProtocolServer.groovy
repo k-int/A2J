@@ -85,10 +85,15 @@ public class ProtocolServer<RootCodecClass, RootTypeClass> {
         logger.debug("Waiting for connection");
         Socket socket = (Socket)server_socket.accept();
 
+        logger.debug("Accepting new server socket");
+
         if ( socket_timeout > 0 )
           socket.setSoTimeout(socket_timeout);
 
+        logger.debug("Create new protocol association for new socket connection");
         ProtocolAssociation pa = new ProtocolAssociation<RootCodecClass,RootTypeClass>(socket,root_codec)
+        logger.debug("Starting protocol association (server) and returning to accept loop");
+        pa.start()
       }
     }
     catch ( java.net.SocketException se) {

@@ -27,8 +27,8 @@ public class ProtocolAssociation<RootCodecClass, RootTypeClass> extends Thread {
     root_codec = root_codec;
     this.socket = socket;
     try {
-      incoming_data = s.getInputStream();
-      outgoing_data = s.getOutputStream();
+      incoming_data = socket.getInputStream();
+      outgoing_data = socket.getOutputStream();
     }
     catch( java.io.IOException e ) {
       cat.error("Error constructing TargetEndpoint",e);

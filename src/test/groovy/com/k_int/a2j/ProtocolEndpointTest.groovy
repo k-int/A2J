@@ -24,17 +24,25 @@ class ProtocolEndpointTest extends Specification {
       // ProtocolEndpoint<Integer_codec, BigInteger> intProtocolEndpoint = new ProtocolEndpoint<Integer_codec, BigInteger>(Integer_codec.getCodec(), 'localhost',8999);
       // ProtocolServer<Integer_codec, BigInteger> protocol_server = new ProtocolServer<Integer_codec, BigInteger>(Integer_codec.getCodec(), 8999);
       logger.debug("Create New protocol server");
+      
       ProtocolServer ps = new ProtocolServer<Integer_codec, BigInteger>(8999,Integer_codec.getCodec());
+
       logger.debug("Start New protocol server");
       ps.start();
+
       logger.debug("Wait for setup");
       synchronized(this) {
         Thread.sleep(2000);
       }
+
       logger.debug("ok - carry on");
+
     then:
       logger.debug("Stop server");
+      java.net.Socket client_socket = new java.net.Socket(java.net.InetAddress.getByName('localhost'),8999);
+      ProtocolAssociation client = new ProtocolAssociation<Integer_codec, BigInteger>(client_socket,Integer_codec.getCodec());
       ps.stop(true);
+
     expect:
       1==1
   }
