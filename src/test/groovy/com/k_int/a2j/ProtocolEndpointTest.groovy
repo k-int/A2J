@@ -32,7 +32,7 @@ class ProtocolEndpointTest extends Specification {
       // Create a new protocol association observer that will collect all incoming APDUs (BigInts in this case)
       ProtocolAssociationObserver pao = new ProtocolAssociationObserver<BigInteger>() {
         public void notify(ProtocolAssociation pa, BigInteger apdu) {
-          logger.debug("**** Incoming ${apdu} from ${pa}");
+          logger.debug("ProtocolAssociationObserver::notify - Incoming ${apdu} from ${pa}");
           synchronized(received_apdus) {
             received_apdus.add(apdu)
             received_apdus.notifyAll()
@@ -62,7 +62,7 @@ class ProtocolEndpointTest extends Specification {
 
       logger.debug("Start New protocol server");
       ps.start();
-      logger.debug("ok - carry on Size of received_apdus is ${received_apdus.size()}");
+      logger.debug("Started Server. Size of received_apdus list is ${received_apdus.size()}");
 
     when:
       // Create a client capable of transmitting big integers and send the value 1002 to the server using
@@ -78,6 +78,7 @@ class ProtocolEndpointTest extends Specification {
       client.send(new BigInteger(1002));
       client.send(new BigInteger(0));
       client.send(new BigInteger(1));
+      client.send(new BigInteger(32));
       client.send(new BigInteger(4894661002));
 
       // All done, close client
@@ -85,22 +86,25 @@ class ProtocolEndpointTest extends Specification {
       client.close();
 
     then:
+      int num_apdus = 5;
       // Wait to see if the value arrives on the server
       synchronized(received_apdus) {
-        logger.debug("Waiting for received_apdus to be 4: ${received_apdus.size()}");
-        while ( received_apdus.size() != 4 ) {
+        logger.debug("Waiting for received_apdus to be ${num_apdus}: ${received_apdus.size()}");
+        while ( received_apdus.size() != num_apdus ) {
           logger.debug("Waiting on changes to received_apdus");
           received_apdus.wait(10000);
         }
       }
       logger.debug("There are ${received_apdus.size()} APDUs waiting.. Check values(${received_apdus})");
+      assert num_apdus == received_apdus.size()
 
     expect:
-      // That the value we received is the value we sent
+      // That the values we received are the right ones in the right order
       received_apdus.get(0).longValue() == 1002;
       received_apdus.get(1).longValue() == 0;
       received_apdus.get(2).longValue() == 1;
-      received_apdus.get(3).longValue() == 4894661002;
+      received_apdus.get(3).longValue() == 32;
+      received_apdus.get(4).longValue() == 4894661002;
 
     cleanup:
       logger.debug("Shutdown protocol server (And wait for it to complete)");
