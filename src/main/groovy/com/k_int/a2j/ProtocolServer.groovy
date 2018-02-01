@@ -91,8 +91,8 @@ public class ProtocolServer<RootCodecClass, RootTypeClass> {
 
       if ( wait_for_finish ) {
         while(server_status!=3) {
-          logger.debug('Wait for server status 3, currently '+server_status);
           synchronized(this) {
+            logger.debug('Wait for server status 3, currently '+server_status);
             this.wait();
           }
         }
@@ -140,6 +140,7 @@ public class ProtocolServer<RootCodecClass, RootTypeClass> {
     }
 
     server_status = 3;
+    logger.debug("Server status moved to three - notify all waiting threads");
     synchronized(this) {
       this.notifyAll();
     }
