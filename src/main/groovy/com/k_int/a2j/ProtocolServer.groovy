@@ -26,11 +26,26 @@ public class ProtocolServer<RootCodecClass, RootTypeClass> {
 
   final static Logger logger = LoggerFactory.getLogger(ProtocolServer.class);
 
+  /**
+   * The factory we will use to create new protocol associations. By default we create a vanialla
+   * protocol association that does nothing special.
+   */
+  private ProtocolAssociationFactory paf = null;
 
   public ProtocolServer(int port, 
                         RootCodecClass root_codec) throws IOException {
     this.root_codec = root_codec;
     this.server_port = port;
+
+    // Construct a default protocol association factory, no subclassing of APDU handling etc
+    this.paf = new ProtocolAssociationFactory() {
+      public ProtocolAssociation create(Socket socket,
+                                        RootCodecClassroot_codec,
+                                        String association_name) {
+        return new ProtocolAssociation<RootCodecClass,RootTypeClass>(socket,root_codec,'ServerAssociation')
+      }
+
+    }
   }
 
   public void start() throws Exception {
@@ -92,7 +107,8 @@ public class ProtocolServer<RootCodecClass, RootTypeClass> {
           socket.setSoTimeout(socket_timeout);
 
         logger.debug("Create new protocol association for new socket connection");
-        ProtocolAssociation pa = new ProtocolAssociation<RootCodecClass,RootTypeClass>(socket,root_codec,'ServerAssociation')
+        // ProtocolAssociation pa = new ProtocolAssociation<RootCodecClass,RootTypeClass>(socket,root_codec,'ServerAssociation')
+        ProtocolAssociation pa = this.paf.create(socket,root_codec,'ServerAssociation');
 
         logger.debug("Starting protocol association (server) and returning to accept loop");
         pa.start()
