@@ -76,6 +76,9 @@ class ProtocolEndpointTest extends Specification {
 
       logger.debug("Send int value 1002");
       client.send(new BigInteger(1002));
+      client.send(new BigInteger(0));
+      client.send(new BigInteger(1));
+      client.send(new BigInteger(4894661002));
 
       // All done, close client
       logger.debug("Close client");
@@ -84,16 +87,20 @@ class ProtocolEndpointTest extends Specification {
     then:
       // Wait to see if the value arrives on the server
       synchronized(received_apdus) {
-        logger.debug("Waiting for received_apdus to be 1: ${received_apdus.size()}");
-        while ( received_apdus.size() != 1 ) {
-          received_apdus.sleep(10000);
+        logger.debug("Waiting for received_apdus to be 4: ${received_apdus.size()}");
+        while ( received_apdus.size() != 4 ) {
+          logger.debug("Waiting on changes to received_apdus");
+          received_apdus.wait(10000);
         }
       }
-      logger.debug("There is 1 APDU waiting.. Check it has the correct value");
+      logger.debug("There are ${received_apdus.size()} APDUs waiting.. Check values(${received_apdus})");
 
     expect:
       // That the value we received is the value we sent
-      received_apdus.get(0).equals(new BigInteger(1002));
+      received_apdus.get(0).longValue() == 1002;
+      received_apdus.get(1).longValue() == 0;
+      received_apdus.get(2).longValue() == 1;
+      received_apdus.get(3).longValue() == 4894661002;
 
     cleanup:
       logger.debug("Shutdown protocol server (And wait for it to complete)");
