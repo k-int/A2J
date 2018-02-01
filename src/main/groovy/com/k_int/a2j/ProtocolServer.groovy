@@ -48,6 +48,14 @@ public class ProtocolServer<RootCodecClass, RootTypeClass> {
     }
   }
 
+  public ProtocolServer(int port,
+                        RootCodecClass root_codec,
+                        ProtocolAssociationFactory paf) throws IOException {
+    this.root_codec = root_codec;
+    this.server_port = port;
+    this.paf = paf;
+  }
+
   public void start() throws Exception {
 
     logger.debug("ProtocolServer::start");

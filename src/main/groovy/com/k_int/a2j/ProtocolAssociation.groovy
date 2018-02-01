@@ -33,6 +33,8 @@ public class ProtocolAssociation<RootCodecClass, RootTypeClass> extends Thread {
   public static final String UTF_16_ENCODING = "UTF-16";
   private String charset_encoding = US_ASCII_ENCODING;
 
+  private ProtocolAssociationObserver observer = null;
+
   final static Logger logger = LoggerFactory.getLogger(ProtocolAssociation.class);
 
   String assoc_name = "ProtocolAssociation";
@@ -116,8 +118,15 @@ public class ProtocolAssociation<RootCodecClass, RootTypeClass> extends Thread {
     socket.close()
   }
 
+  public void setObserver(ProtocolAssociationObserver observer) {
+    this.observer = observer;
+  }
+
   public receive(RootTypeClass apdu) {
     logger.debug("incoming APDU ${apdu}");
+    if ( observer ) {
+      observer.notify(this, apdu);
+    }
   }
 }
 
