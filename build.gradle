@@ -19,7 +19,7 @@ dependencies {
 
 group = 'com.k_int'
 sourceCompatibility = 1.7
-version = '1.0'
+version = '1.0.1'
 jar {
     manifest {
         attributes 'Implementation-Title': 'Gradle Quickstart',
