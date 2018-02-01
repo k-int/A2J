@@ -22,6 +22,13 @@ class ProtocolEndpointTest extends Specification {
   def testBasicIntProtocol() {
     when:
       logger.debug("Create New protocol server");
+  
+      // Create a new protocol association observer that will collect all incoming APDUs (BigInts in this case)
+      ProtocolAssociationObserver pao = new ProtocolAssociationObserver<BigInteger>() {
+        public void notify(ProtocolAssociation pa, BigInteger apdu) {
+          logger.debug("Incoming ${apdu} from ${pa}");
+        }
+      }
 
       ProtocolServer ps = new ProtocolServer<Integer_codec, BigInteger>(8999, Integer_codec.getCodec());
 
