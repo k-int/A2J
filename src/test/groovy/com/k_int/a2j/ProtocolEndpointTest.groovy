@@ -22,7 +22,7 @@ class ProtocolEndpointTest extends Specification {
 
   @Unroll
   def testBasicIntProtocol() {
-    when:
+    setup:
       logger.debug("Create New protocol server");
   
       // Create a new protocol association observer that will collect all incoming APDUs (BigInts in this case)
@@ -60,7 +60,9 @@ class ProtocolEndpointTest extends Specification {
 
       logger.debug("ok - carry on");
 
-    then:
+    when:
+      // Create a client capable of transmitting big integers and send the value 1002 to the server using
+      // that client.
       logger.debug("Create client");
       java.net.Socket client_socket = new java.net.Socket(java.net.InetAddress.getByName('localhost'),8999);
       ProtocolAssociation client = new ProtocolAssociation<Integer_codec, BigInteger>(client_socket,Integer_codec.getCodec(),'ClientAssociation');
@@ -71,15 +73,20 @@ class ProtocolEndpointTest extends Specification {
       logger.debug("Send int value 1002");
       client.send(new BigInteger(1002));
 
+      // All done, close client
       logger.debug("Close client");
       client.close();
 
+    then:
+      // Wait to see if the value arrives on the server
       synchronized(this) { Thread.sleep(2000); }
 
-      logger.debug("Shutdown protocol server");
-      ps.stop(true);
-
     expect:
+      // That the value we received is the value we sent
       1==1
+
+    cleanup:
+      logger.debug("Shutdown protocol server (And wait for it to complete)");
+      ps.stop(true);
   }
 }
