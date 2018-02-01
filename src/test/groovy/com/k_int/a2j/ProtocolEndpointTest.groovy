@@ -22,13 +22,21 @@ class ProtocolEndpointTest extends Specification {
 
   @Unroll
   def testBasicIntProtocol() {
+
+    List received_apdus = new java.util.ArrayList();
+
     setup:
       logger.debug("Create New protocol server");
+
   
       // Create a new protocol association observer that will collect all incoming APDUs (BigInts in this case)
       ProtocolAssociationObserver pao = new ProtocolAssociationObserver<BigInteger>() {
         public void notify(ProtocolAssociation pa, BigInteger apdu) {
           logger.debug("**** Incoming ${apdu} from ${pa}");
+          synchronized(received_apdus) {
+            received_apdus.add(apdu)
+            received_apdus.notifyAll()
+          }
         }
       }
 
@@ -54,11 +62,7 @@ class ProtocolEndpointTest extends Specification {
 
       logger.debug("Start New protocol server");
       ps.start();
-
-      logger.debug("Wait for setup");
-      synchronized(this) { Thread.sleep(2000); }
-
-      logger.debug("ok - carry on");
+      logger.debug("ok - carry on Size of received_apdus is ${received_apdus.size()}");
 
     when:
       // Create a client capable of transmitting big integers and send the value 1002 to the server using
@@ -79,11 +83,17 @@ class ProtocolEndpointTest extends Specification {
 
     then:
       // Wait to see if the value arrives on the server
-      synchronized(this) { Thread.sleep(2000); }
+      synchronized(received_apdus) {
+        logger.debug("Waiting for received_apdus to be 1: ${received_apdus.size()}");
+        while ( received_apdus.size() != 1 ) {
+          received_apdus.sleep(10000);
+        }
+      }
+      logger.debug("There is 1 APDU waiting.. Check it has the correct value");
 
     expect:
       // That the value we received is the value we sent
-      1==1
+      received_apdus.get(0).equals(new BigInteger(1002));
 
     cleanup:
       logger.debug("Shutdown protocol server (And wait for it to complete)");
