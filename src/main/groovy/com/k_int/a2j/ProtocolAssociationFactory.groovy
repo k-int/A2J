@@ -9,7 +9,7 @@ import java.net.Socket;
 public interface ProtocolAssociationFactory<RootCodecClass, RootTypeClass> {
 
   public ProtocolAssociation create(Socket socket,
-                                    RootCodecClassroot_codec,
+                                    RootCodecClass root_codec,
                                     String association_name);
 }
 

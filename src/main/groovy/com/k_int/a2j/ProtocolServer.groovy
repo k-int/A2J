@@ -40,9 +40,9 @@ public class ProtocolServer<RootCodecClass, RootTypeClass> {
     // Construct a default protocol association factory, no subclassing of APDU handling etc
     this.paf = new ProtocolAssociationFactory() {
       public ProtocolAssociation create(Socket socket,
-                                        RootCodecClassroot_codec,
+                                        RootCodecClass pa_root_codec,
                                         String association_name) {
-        return new ProtocolAssociation<RootCodecClass,RootTypeClass>(socket,root_codec,'ServerAssociation')
+        return new ProtocolAssociation<RootCodecClass,RootTypeClass>(socket,pa_root_codec,'ServerAssociation')
       }
 
     }
@@ -118,6 +118,8 @@ public class ProtocolServer<RootCodecClass, RootTypeClass> {
         // ProtocolAssociation pa = new ProtocolAssociation<RootCodecClass,RootTypeClass>(socket,root_codec,'ServerAssociation')
         ProtocolAssociation pa = this.paf.create(socket,root_codec,'ServerAssociation');
 
+        assert pa != null
+
         logger.debug("Starting protocol association (server) and returning to accept loop");
         pa.start()
       }
@@ -131,7 +133,10 @@ public class ProtocolServer<RootCodecClass, RootTypeClass> {
       }
     }
     catch (java.io.IOException e) {
-      e.printStackTrace();
+      logger.error("Unexpected IO Exception",e);
+    }
+    catch ( Exception e ) {
+      logger.error("Unexpected Exception",e);
     }
 
     server_status = 3;
