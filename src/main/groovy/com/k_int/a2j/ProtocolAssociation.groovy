@@ -123,7 +123,6 @@ public class ProtocolAssociation<RootCodecClass, RootTypeClass> extends Thread {
   }
 
   public receive(RootTypeClass apdu) {
-    logger.debug("incoming APDU ${apdu}");
     if ( observer ) {
       observer.notify(this, apdu);
     }
