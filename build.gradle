@@ -31,7 +31,9 @@ jar {
 uploadArchives {
     repositories {
         mavenDeployer {
-            repository(url: "file://~/.m2/repository/")
+            repository(url: "http://nexus.k-int.com/content/repositories/releases/") {
+                authentication(userName: knowintNexusUser, password: knowintNexusPass)
+            }
         }
     }
 }

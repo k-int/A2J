@@ -13,3 +13,14 @@ Build artefacts are published to the k-int nexus repository ( http://nexus.k-int
 To build and install jar in your local maven repository, use
 
 gradle install
+
+# For K-int configuration management
+
+Add 
+
+knowintNexusUser=ABC
+knowintNexusPass=DEF
+
+entries to ~/.gradle/gradle.properties to enable artefact upload via gradle publish
+
+
