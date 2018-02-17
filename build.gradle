@@ -32,7 +32,9 @@ uploadArchives {
     repositories {
         mavenDeployer {
             repository(url: "http://nexus.k-int.com/content/repositories/releases/") {
-                authentication(userName: knowintNexusUser, password: knowintNexusPass)
+                def usr = project.hasProperty('knowintNexusUser') ? knowintNexusUser :''
+                def pass = project.hasProperty('knowintNexusPass') ? knowintNexusPass :''
+                authentication(userName: usr, password: pass)
             }
         }
     }
